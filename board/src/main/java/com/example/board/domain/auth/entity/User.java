@@ -20,15 +20,19 @@ public class User {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String userName;
+
+    @Column(nullable = false)
+    private String password;
 
     @CreatedDate
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Builder
-    public User(String name) {
-        this.name = name;
+    public User(String name, String password) {
+        this.userName = name;
+        this.password = password;
     }
 
 }
