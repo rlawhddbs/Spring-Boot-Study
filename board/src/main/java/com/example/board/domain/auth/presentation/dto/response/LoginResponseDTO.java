@@ -1,15 +1,21 @@
 package com.example.board.domain.auth.presentation.dto.response;
 
-import java.time.LocalDateTime;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
+@Getter
+@RequiredArgsConstructor
 public class LoginResponseDTO {
 
     private String accessToken;
 
-    private LocalDateTime accessTokenExpiredIn;
-
     private String refreshToken;
 
-    private LocalDateTime refreshTokenExpiredIn;
+    @Builder
+    public LoginResponseDTO(String accessToken, String refreshToken) {
+        this.accessToken = accessToken;
+        this.refreshToken = refreshToken;
+    }
 
 }
