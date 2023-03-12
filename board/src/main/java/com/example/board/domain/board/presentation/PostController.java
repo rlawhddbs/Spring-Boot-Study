@@ -1,7 +1,9 @@
 package com.example.board.domain.board.presentation;
 
+import com.example.board.common.annotation.CheckAuthorization;
 import com.example.board.common.response.DataResponse;
 import com.example.board.common.response.Response;
+import com.example.board.domain.auth.entity.User;
 import com.example.board.domain.board.presentation.dto.request.CreatePostRequestDTO;
 import com.example.board.domain.board.presentation.dto.request.ModifyPostRequestDTO;
 import com.example.board.domain.board.presentation.dto.response.PostPaginationResponseDTO;
@@ -46,10 +48,12 @@ public class PostController {
         return DataResponse.ok("게시물 페이지네이션 조회 성공", postPagination);
     }
 
+    @CheckAuthorization
     @Operation(summary = "글 작성")
     @PostMapping
     public ResponseEntity<Response> createPost(
-            @Valid @RequestBody CreatePostRequestDTO createPostRequestDTO
+            @Valid @RequestBody CreatePostRequestDTO createPostRequestDTO,
+            @RequestAttribute User user
     ) {
 
         postService.createPost(createPostRequestDTO);

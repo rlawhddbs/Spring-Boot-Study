@@ -27,7 +27,9 @@ public class CommentController {
     @GetMapping
     public ResponseEntity<DataResponse<List<CommentResponseDTO>>> getCommentAll() {
 
-        return DataResponse.ok("댓글 목록 조회 성공", commentService.getCommentAll());
+        List<CommentResponseDTO> comment = commentService.getCommentAll();
+
+        return DataResponse.ok("댓글 목록 조회 성공", comment);
     }
 
     @Operation(summary = "댓글 작성")
