@@ -1,6 +1,5 @@
 package com.example.board.common.error;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

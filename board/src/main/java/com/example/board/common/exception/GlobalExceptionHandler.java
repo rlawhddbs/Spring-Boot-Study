@@ -1,6 +1,5 @@
 package com.example.board.common.exception;
 
-import com.example.board.common.error.CustomError;
 import com.example.board.common.error.ErrorCode;
 import com.example.board.common.error.ErrorResponseEntity;
 import lombok.extern.slf4j.Slf4j;
@@ -13,10 +12,10 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
-public class CommonAdviceController {
+public class GlobalExceptionHandler {
 
-    @ExceptionHandler(CustomError.class)
-    protected ResponseEntity handleCustomException(CustomError e){
+    @ExceptionHandler(CustomException.class)
+    protected ResponseEntity handleCustomException(CustomException e){
         log.error(e.getMessage());
         return ErrorResponseEntity.responseEntity(e.getErrorCode());
     }
