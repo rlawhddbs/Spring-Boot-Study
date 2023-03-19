@@ -1,11 +1,11 @@
 package com.example.board.domain.board.service;
 
-import com.example.board.common.error.CustomError;
-import com.example.board.common.error.ErrorCode;
+import com.example.board.domain.auth.entity.Role;
+import com.example.board.domain.auth.entity.User;
 import com.example.board.domain.auth.entity.repository.UserRepository;
 import com.example.board.domain.board.entity.Post;
-import com.example.board.domain.board.entity.repository.CommentRepository;
 import com.example.board.domain.board.entity.repository.PostRepository;
+import com.example.board.domain.board.exception.PostNotFoundException;
 import com.example.board.domain.board.presentation.dto.request.CreatePostRequestDTO;
 import com.example.board.domain.board.presentation.dto.request.ModifyPostRequestDTO;
 import com.example.board.domain.board.presentation.dto.response.PostPaginationResponseDTO;
@@ -14,12 +14,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PostServiceImpl implements PostService{
 
     private final UserRepository userRepository;
@@ -29,7 +31,7 @@ public class PostServiceImpl implements PostService{
     public PostResponseDTO getPostById(Long postId) {
 
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomError(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> PostNotFoundException.EXCEPTION);
 
         return new PostResponseDTO(post);
     }
@@ -47,30 +49,41 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public void createPost(CreatePostRequestDTO dto) {
+    @Transactional
+    public void createPost(CreatePostRequestDTO dto, User user) {
 
         postRepository.save(Post.builder()
-                .user(userRepository.findById(1L).orElseThrow())
+                .user(user)
                 .title(dto.getTitle())
                 .content(dto.getContent())
                 .build());
     }
 
     @Override
-    public void modifyPost(ModifyPostRequestDTO dto) {
+    @Transactional
+    public void modifyPost(ModifyPostRequestDTO dto, User user) {
 
         Post post = postRepository.findById(dto.getPostId())
-                .orElseThrow(() -> new CustomError(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> PostNotFoundException.EXCEPTION);
+
+        if (user.getRole() == Role.USER) {
+
+        }
 
         post.modifyPost(dto.getTitle(), dto.getContent());
 
         postRepository.save(post);
+
     }
 
     @Override
-    public void deletePost(Long postId) {
+    @Transactional
+    public void deletePost(Long postId, User user) {
 
-        postRepository.deleteById(postId);
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> PostNotFoundException.EXCEPTION);
+
+        postRepository.delete(post);
 
     }
 

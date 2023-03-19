@@ -1,7 +1,7 @@
 package com.example.board.common.interceptor;
 
 import com.example.board.common.annotation.CheckAuthorization;
-import com.example.board.common.error.CustomError;
+import com.example.board.common.exception.CustomException;
 import com.example.board.common.error.ErrorCode;
 import com.example.board.common.extractor.AuthExtractor;
 import com.example.board.common.jwt.JwtUtil;
@@ -39,7 +39,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         User user = jwtUtil.verifyToken(token);
         if (user == null) {
-            throw new CustomError(ErrorCode.TOKEN_EXPIRED);
+            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
         }
 
         request.setAttribute("user", user);

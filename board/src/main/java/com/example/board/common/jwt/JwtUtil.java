@@ -1,6 +1,6 @@
 package com.example.board.common.jwt;
 
-import com.example.board.common.error.CustomError;
+import com.example.board.common.exception.CustomException;
 import com.example.board.common.error.ErrorCode;
 import com.example.board.domain.auth.entity.User;
 import com.example.board.domain.auth.entity.repository.UserRepository;
@@ -48,12 +48,12 @@ public class JwtUtil {
     public User verifyToken(String token) {
         String userName = parseToken(token).get("userName").toString();
         return userRepository.findByUserName(userName)
-                .orElseThrow(() -> new CustomError(ErrorCode.NOT_FOUND));
+                .orElseThrow(() -> new CustomException(ErrorCode.NOT_FOUND));
     }
 
     private Claims parseToken(String token) {
         if (token.isEmpty()) {
-            throw new CustomError(ErrorCode.TOKEN_NOT_PROVIDED);
+            throw new CustomException(ErrorCode.TOKEN_NOT_PROVIDED);
         }
         try {
             return Jwts.parserBuilder()
@@ -62,11 +62,11 @@ public class JwtUtil {
                     .parseClaimsJws(token)
                     .getBody();
         } catch (ExpiredJwtException e) {
-            throw new CustomError(ErrorCode.TOKEN_EXPIRED);
+            throw new CustomException(ErrorCode.TOKEN_EXPIRED);
         } catch (IllegalArgumentException e) {
-            throw new CustomError(ErrorCode.TOKEN_NOT_PROVIDED);
+            throw new CustomException(ErrorCode.TOKEN_NOT_PROVIDED);
         } catch (UnsupportedJwtException | MalformedJwtException e) {
-            throw CustomError.of(ErrorCode.INVALID_TOKEN);
+            throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
     }
 
