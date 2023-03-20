@@ -1,7 +1,9 @@
 package com.example.board.domain.board.presentation;
 
+import com.example.board.common.annotation.CheckAuthorization;
 import com.example.board.common.response.DataResponse;
 import com.example.board.common.response.Response;
+import com.example.board.domain.auth.entity.User;
 import com.example.board.domain.board.presentation.dto.request.CreateCommentRequestDTO;
 import com.example.board.domain.board.presentation.dto.request.ModifyCommentRequestDTO;
 import com.example.board.domain.board.presentation.dto.response.CommentResponseDTO;
@@ -32,35 +34,41 @@ public class CommentController {
         return DataResponse.ok("댓글 목록 조회 성공", comment);
     }
 
+    @CheckAuthorization
     @Operation(summary = "댓글 작성")
     @PostMapping
     public ResponseEntity<Response> createComment(
-            @Valid @RequestBody CreateCommentRequestDTO createCommentRequestDTO
+            @Valid @RequestBody CreateCommentRequestDTO createCommentRequestDTO,
+            @RequestAttribute User user
     ) {
 
-        commentService.createComment(createCommentRequestDTO);
+        commentService.createComment(createCommentRequestDTO, user);
 
         return Response.created("댓글 작성 성공");
     }
 
+    @CheckAuthorization
     @Operation(summary = "댓글 수정")
     @PutMapping
     public ResponseEntity<Response> modifyComment(
-            @Valid @RequestBody ModifyCommentRequestDTO modifyCommentRequestDTO
+            @Valid @RequestBody ModifyCommentRequestDTO modifyCommentRequestDTO,
+            @RequestAttribute User user
     ) {
 
-        commentService.modifyComment(modifyCommentRequestDTO);
+        commentService.modifyComment(modifyCommentRequestDTO, user);
 
         return Response.ok("댓글 수정 성공");
     }
 
+    @CheckAuthorization
     @Operation(summary = "댓글 삭제")
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Response> deleteComment(
-            @PathVariable Long commentId
+            @PathVariable Long commentId,
+            @RequestAttribute User user
     ) {
 
-        commentService.deleteComment(commentId);
+        commentService.deleteComment(commentId, user);
 
         return Response.ok("댓글 삭제 성공");
     }

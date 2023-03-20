@@ -1,6 +1,7 @@
 package com.example.board.domain.board.service;
 
 import com.example.board.domain.auth.entity.User;
+import com.example.board.domain.auth.service.AuthService;
 import com.example.board.domain.board.entity.Comment;
 import com.example.board.domain.board.entity.Post;
 import com.example.board.domain.board.entity.repository.CommentRepository;
@@ -15,13 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class CommentServiceImpl implements CommentService {
 
+    private final AuthService authService;
     private final PostRepository postRepository;
     private final CommentRepository commentRepository;
 
@@ -29,7 +30,7 @@ public class CommentServiceImpl implements CommentService {
     public List<CommentResponseDTO> getCommentAll() {
         return commentRepository.findAll().stream()
                 .map(CommentResponseDTO::new)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -54,6 +55,8 @@ public class CommentServiceImpl implements CommentService {
         Comment comment = commentRepository.findById(dto.getCommentId())
                 .orElseThrow(() -> CommentNotFoundException.EXCEPTION);
 
+        authService.checkUserPermission(user, comment.getUser());
+
         comment.modifyComment(dto.getContent());
 
         commentRepository.save(comment);
@@ -66,6 +69,8 @@ public class CommentServiceImpl implements CommentService {
 
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> CommentNotFoundException.EXCEPTION);
+
+        authService.checkUserPermission(user, comment.getUser());
 
         commentRepository.delete(comment);
 

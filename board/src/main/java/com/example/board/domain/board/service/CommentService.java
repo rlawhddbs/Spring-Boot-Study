@@ -1,5 +1,6 @@
 package com.example.board.domain.board.service;
 
+import com.example.board.domain.auth.entity.User;
 import com.example.board.domain.board.presentation.dto.request.CreateCommentRequestDTO;
 import com.example.board.domain.board.presentation.dto.request.ModifyCommentRequestDTO;
 import com.example.board.domain.board.presentation.dto.response.CommentResponseDTO;
@@ -10,10 +11,10 @@ public interface CommentService {
 
     List<CommentResponseDTO> getCommentAll();
 
-    void createComment(CreateCommentRequestDTO createCommentRequestDTO);
+    void createComment(CreateCommentRequestDTO createCommentRequestDTO, User user);
 
-    void modifyComment(ModifyCommentRequestDTO modifyCommentRequestDTO);
+    void modifyComment(ModifyCommentRequestDTO modifyCommentRequestDTO, User user);
 
-    void deleteComment(Long commentId);
+    void deleteComment(Long commentId, User user);
 
 }

@@ -3,8 +3,10 @@ package com.example.board.domain.auth.service;
 import com.example.board.common.exception.CustomException;
 import com.example.board.common.error.ErrorCode;
 import com.example.board.common.jwt.JwtUtil;
+import com.example.board.domain.auth.entity.Role;
 import com.example.board.domain.auth.entity.User;
 import com.example.board.domain.auth.entity.repository.UserRepository;
+import com.example.board.domain.auth.exception.InvalidUserException;
 import com.example.board.domain.auth.presentation.dto.response.LoginResponseDTO;
 import com.example.board.domain.auth.presentation.dto.request.LoginRequestDTO;
 import com.example.board.domain.auth.presentation.dto.request.RegisterRequestDTO;
@@ -44,6 +46,12 @@ public class AuthServiceImpl implements AuthService {
                 .accessToken(jwtUtil.generateAccessToken(user.getUserName()))
                 .refreshToken(jwtUtil.generateRefreshToken(user.getUserName()))
                 .build();
+    }
+
+    public void checkUserPermission(User currentUser, User postOrCommentUser) {
+        if (currentUser.getRole() == Role.USER && !currentUser.getId().equals(postOrCommentUser.getId())) {
+            throw InvalidUserException.EXCEPTION;
+        }
     }
 
 }

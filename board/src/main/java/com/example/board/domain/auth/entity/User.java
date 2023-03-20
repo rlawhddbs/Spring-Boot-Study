@@ -29,10 +29,15 @@ public class User {
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
+    @Enumerated
+    @Column(nullable = false)
+    private Role role;
+
     @Builder
     public User(String userName, String password) {
         this.userName = userName;
         this.password = password;
+        this.role = Role.USER;
     }
 
 }

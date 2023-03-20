@@ -56,29 +56,33 @@ public class PostController {
             @RequestAttribute User user
     ) {
 
-        postService.createPost(createPostRequestDTO);
+        postService.createPost(createPostRequestDTO, user);
 
         return Response.created("게시물 작성 성공");
     }
 
+    @CheckAuthorization
     @Operation(summary = "글 수정")
     @PutMapping
     public ResponseEntity<Response> modifyPost(
-            @Valid @RequestBody ModifyPostRequestDTO modifyPostRequestDTO
+            @Valid @RequestBody ModifyPostRequestDTO modifyPostRequestDTO,
+            @RequestAttribute User user
     ) {
 
-        postService.modifyPost(modifyPostRequestDTO);
+        postService.modifyPost(modifyPostRequestDTO, user);
 
         return Response.ok("게시물 수정 성공");
     }
 
+    @CheckAuthorization
     @Operation(summary = "글 삭제")
     @DeleteMapping("/{postId}")
     public ResponseEntity<Response> deletePost(
-            @PathVariable Long postId
+            @PathVariable Long postId,
+            @RequestAttribute User user
     ) {
 
-        postService.deletePost(postId);
+        postService.deletePost(postId, user);
 
         return Response.ok("게시물 삭제 성공");
     }

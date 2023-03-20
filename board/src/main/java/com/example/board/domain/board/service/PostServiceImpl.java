@@ -1,8 +1,7 @@
 package com.example.board.domain.board.service;
 
-import com.example.board.domain.auth.entity.Role;
 import com.example.board.domain.auth.entity.User;
-import com.example.board.domain.auth.entity.repository.UserRepository;
+import com.example.board.domain.auth.service.AuthService;
 import com.example.board.domain.board.entity.Post;
 import com.example.board.domain.board.entity.repository.PostRepository;
 import com.example.board.domain.board.exception.PostNotFoundException;
@@ -17,14 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class PostServiceImpl implements PostService{
 
-    private final UserRepository userRepository;
+    private final AuthService authService;
     private final PostRepository postRepository;
 
     @Override
@@ -43,7 +41,7 @@ public class PostServiceImpl implements PostService{
 
         List<PostResponseDTO> postList = postRepository.findAll(pageRequest).stream()
                 .map(PostResponseDTO::new)
-                .collect(Collectors.toList());
+                .toList();
 
         return new PostPaginationResponseDTO(postList, page, size);
     }
@@ -66,9 +64,7 @@ public class PostServiceImpl implements PostService{
         Post post = postRepository.findById(dto.getPostId())
                 .orElseThrow(() -> PostNotFoundException.EXCEPTION);
 
-        if (user.getRole() == Role.USER) {
-
-        }
+        authService.checkUserPermission(user, post.getUser());
 
         post.modifyPost(dto.getTitle(), dto.getContent());
 
@@ -82,6 +78,8 @@ public class PostServiceImpl implements PostService{
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> PostNotFoundException.EXCEPTION);
+
+        authService.checkUserPermission(user, post.getUser());
 
         postRepository.delete(post);
 
